@@ -38,12 +38,19 @@ class NovoVisitanteTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_id('tr')
-        self.assertTrue(
-            any(row.text == '1: Comprar penas de pavão' for row in rows),
-            "New to-do item did not apper in table"
-        )
+        self.assertIn('1: Comprar penas de pavão', [row.text for row in rows])
 
         # Ela digita 'Usar a penas de pavão para pescar
+
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Usar penas de pavão para fazer uma isca')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_id('tr')
+        self.assertIn('1: Comprar penas de pavão', [row.text for row in rows])
+        self.assertIn('2: Usar penas de pavão para fazer uma isca', [row.text for row in rows])
 
         self.fail('Finalizar o testes')
 
