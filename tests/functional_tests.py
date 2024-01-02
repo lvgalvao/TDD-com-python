@@ -18,7 +18,7 @@ class NovoVisitanteTest(unittest.TestCase):
         Com esse teste removemos essa lógica duplicada e simpliciamos nossa lógica
         """
         table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_id('tr')
+        rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
     
     def test_iniciar_uma_lista_e_acessar_depois(self):
