@@ -10,6 +10,16 @@ class NovoVisitanteTest(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+    def check_for_row_in_list_table(self, row_text):
+        """ 
+        Objetivo desse teste é trabalhar com o princípio de DRY (Don't Repeat Yourself)
+        Háviamos 2 testes semelhantes para testar itens em uma lista
+        Com esse teste removemos essa lógica duplicada e simpliciamos nossa lógica
+        """
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_id('tr')
+        self.assertIn(row_text, [row.text for row in rows])
     
     def test_iniciar_uma_lista_e_acessar_depois(self):
         # Acessar a homepage
@@ -36,9 +46,7 @@ class NovoVisitanteTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_id('tr')
-        self.assertIn('1: Comprar penas de pavão', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: Comprar penas de pavão')
 
         # Ela digita 'Usar a penas de pavão para pescar
 
@@ -47,11 +55,9 @@ class NovoVisitanteTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_id('tr')
-        self.assertIn('1: Comprar penas de pavão', [row.text for row in rows])
-        self.assertIn('2: Usar penas de pavão para fazer uma isca', [row.text for row in rows])
-
+        self.check_for_row_in_list_table('1: Comprar penas de pavão')
+        self.check_for_row_in_list_table('2: Usar penas de pavão para fazer uma isca')
+        
         self.fail('Finalizar o testes')
 
         # Aperta enter, e a página é atualizada novamente, agora exibindo os 2 itens
