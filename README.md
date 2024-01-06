@@ -50,3 +50,5 @@ python tests/functional_tests.py
 
 - Firefox
 - Geckodriver
+
+## O objetivo
