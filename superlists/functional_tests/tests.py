@@ -67,12 +67,32 @@ class NovoVisitanteTest(LiveServerTestCase):
         self.wait_for_row_in_list_table('1: Comprar penas de pavão')
         self.wait_for_row_in_list_table('2: Usar penas de pavão para fazer uma isca')
         
-        self.fail('Finalizar o testes')
+    def test_multiplos_usuarios_podem_iniciar_novas_listas_em_diferentes_urls(self):
+        self.browser.get(self.live_server_url)
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Comprar penas de pavão')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Comprar penas de pavão')
 
-        # Aperta enter, e a página é atualizada novamente, agora exibindo os 2 itens
+        edith_list_url = self.browser.current_url
+        self.assertRegex(edith_list_url, '/lists/.+')
 
-        # Ela anota uma URL único com a lista de tarefa
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Comprar penas de pavão', page_text)
+        self.assertNotIn('Usar penas de pavão para fazer uma isca', page_text)
 
-        # Ela testa a URL única
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Comprar leite')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Comprar leite')
 
-        # Ela anota e saí da aplicação
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, '/lists/.+')
+        self.assertNotEqual(francis_list_url, edith_list_url)
+
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Comprar penas de pavão', page_text)
+        self.assertIn("Comprar leite", page_text)
